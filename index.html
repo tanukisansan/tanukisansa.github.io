@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>TEST LIFF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .btn {
+        height: 40px;
+        border: #DDD;
+        box-shadow: 0 4px 4px #BBB;
+      }
+      .flex {
+        margin-bottom: 10px;
+        width: 100%;
+        text-align:center;
+      }
+      .img {
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+      }
+      .h1 {
+        text-align:center;
+        width: 100%;
+      }
+      .h2 {
+        text-align:center;
+        width: 100%;
+      }
+    </style>
+    <!-- Load LIFF SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+  </head>
+  <body>
+    <div class="flex">
+      <h1>TEST LIFF</h1>
+      <h2>Welcome!</h2>
+    </div>
+    <div class="flex">
+      <button class="btn" id="showProfile">showProfile</button>
+      <button class="btn" id="sendMessage">sendMessage</button>
+    </div>
+    <div class="flex">
+      <img id="profile_img" class="img" src=""/>
+      <p id="profile_name"></p>
+      <p id="profile_status"></p>
+    </div>
+    <div class="flex">
+      <button class="btn" id="closeWindowButton">close</button>
+    </div>
+  </body>
+  <script>
+    // My LIFF ID
+    const liffId = "1653746756-2Lrl3yld"
+    // Text I want to send
+    const text = "I sent test message!"
+    // Containers displaying profile information
+    const Name = document.getElementById('profile_name');
+    const Img = document.getElementById("profile_img");
+    const Status = document.getElementById("profile_status");
+
+    // Callbacks being called after clicking the button
+    function showProfile() {
+      liff.getProfile()
+      .then(profile => {
+        const name = profile.displayName;
+        const pic = profile.pictureUrl;
+        const status = profile.statusMessage;
+        console.log('name', name);
+        console.log('pic', pic);
+        console.log('status', status);
+        Name.innerHTML = name;
+        Status.innerHTML = status;
+        Img.src = pic;
+      })
+      .catch((err) => {
+        console.log('error', err);
+      });
+    }
+
+    function sendMessage() {
+      liff.sendMessages(
+        [{ type: "text", text}]
+        ).then(function() {
+            window.alert('Message sent');
+        }).catch(function(error) {
+            window.alert('Error sending message: ' + error);
+        });
+    }
+
+    function closeWindow() {
+      if (!liff.isInClient()) {
+          sendAlertIfNotInClient();
+      } else {
+          liff.closeWindow();
+      }
+    }
+
+    liff.init({liffId}).then(() => {
+      if (liff.isLoggedIn()) {
+      }
+      else{
+        liff.login();
+      }
+    })
+
+    // Declaration to bind buttons and callbacks
+    document.querySelector("#showProfile").addEventListener("click", showProfile)
+    document.querySelector("#sendMessage").addEventListener("click", sendMessage)
+    document.getElementById('closeWindowButton').addEventListener('click', closeWindow)
+
+  </script>
+</html>
